@@ -1,0 +1,8 @@
+# Python tooling
+tools/.cache/
+__pycache__/
+.venv/
+
+# OS clutter
+Thumbs.db
+.DS_Store

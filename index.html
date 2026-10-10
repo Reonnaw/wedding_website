@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="The wedding of Nadiya &amp; Arga — a watercolour storybook invitation.">
+  <meta name="theme-color" content="#f6efe4">
+  <meta name="color-scheme" content="light">
+  <title>Nadiya &amp; Arga · The Wedding</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='25' cy='35' r='14' fill='none' stroke='%23b8975a' stroke-width='5'/%3E%3Ccircle cx='39' cy='29' r='14' fill='none' stroke='%23c98e8a' stroke-width='5'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Pinyon+Script&amp;display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preload" as="image" href="assets/scenes/invitation/far.webp">
+  <link rel="preload" as="image" href="assets/ornaments/drape-panel.webp">
+  <script>
+    document.documentElement.classList.add('js', 'cover-open');
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-3d');
+  </script>
+</head>
+<body>
+  <!-- Shared watercolour ornaments, referenced with <use> -->
+  <svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8c6a32"/>
+        <stop offset=".3" stop-color="#e9d29a"/>
+        <stop offset=".55" stop-color="#b8914f"/>
+        <stop offset=".75" stop-color="#f3e2b0"/>
+        <stop offset="1" stop-color="#9c7a3e"/>
+      </linearGradient>
+      <linearGradient id="g-petal" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fcebe6"/>
+        <stop offset="1" stop-color="#d9958f"/>
+      </linearGradient>
+      <linearGradient id="g-petal-ivory" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fffaf2"/>
+        <stop offset="1" stop-color="#dcc39b"/>
+      </linearGradient>
+      <radialGradient id="g-glow">
+        <stop offset=".55" stop-color="#fff8e8" stop-opacity="0"/>
+        <stop offset=".9" stop-color="#fff3d6" stop-opacity=".45"/>
+        <stop offset="1" stop-color="#ffefc8" stop-opacity=".8"/>
+      </radialGradient>
+      <g id="leaf">
+        <path d="M0 0C5-5.5 13-6 21 0C13 6 5 5.5 0 0Z" fill-opacity=".88"/>
+        <path d="M1.5 0H18" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width=".7"/>
+      </g>
+      <path id="petal" d="M0-2C6-3 9.5-8 5.5-11.2 2.4-12.8-2.4-12.8-5.5-11.2-9.5-8-6-3 0-2Z"/>
+      <g id="petals">
+        <use href="#petal"/>
+        <use href="#petal" transform="rotate(72)"/>
+        <use href="#petal" transform="rotate(144)"/>
+        <use href="#petal" transform="rotate(216)"/>
+        <use href="#petal" transform="rotate(288)"/>
+        <use href="#petal" transform="rotate(36) scale(.66)"/>
+        <use href="#petal" transform="rotate(156) scale(.66)"/>
+        <use href="#petal" transform="rotate(276) scale(.66)"/>
+      </g>
+      <g id="rose">
+        <use href="#petals" fill="url(#g-petal)" stroke="#bf7d79" stroke-width=".5" stroke-opacity=".55"/>
+        <circle r="3.4" fill="#d48f8a"/>
+        <path d="M-2.2.6C-2.4-1.6.2-2.8 1.9-1.4S1.6 2.2-.4 1.8" fill="none" stroke="#9c5753" stroke-width=".8" stroke-opacity=".75"/>
+      </g>
+      <g id="rose-ivory">
+        <use href="#petals" fill="url(#g-petal-ivory)" stroke="#b0946a" stroke-width=".5" stroke-opacity=".55"/>
+        <circle r="3.4" fill="#d8bf96"/>
+        <path d="M-2.2.6C-2.4-1.6.2-2.8 1.9-1.4S1.6 2.2-.4 1.8" fill="none" stroke="#8a6d45" stroke-width=".8" stroke-opacity=".75"/>
+      </g>
+      <path id="twinkle" d="M0-6 1.2-1.2 6 0 1.2 1.2 0 6-1.2 1.2-6 0-1.2-1.2Z"/>
+
+      <!-- Floral wreath that frames the doorway into the next chapter (hole radius 62.5) -->
+      <g id="wreath-art">
+        <circle r="62.5" fill="url(#g-glow)" style="opacity: var(--glow, 1)"/>
+        <circle r="63.5" fill="none" stroke="url(#g-gold)" stroke-width="3"/>
+        <circle r="68" fill="none" stroke="url(#g-gold)" stroke-width=".9" opacity=".8"/>
+        <use href="#leaf" fill="#7f9471" transform="rotate(148) translate(0 -69) rotate(198) scale(.82)"/>
+        <use href="#leaf" fill="#95a886" transform="rotate(156) translate(0 -71.5) rotate(155) scale(.89)"/>
+        <use href="#leaf" fill="#6b7f5e" transform="rotate(164) translate(0 -74) rotate(202) scale(.96)"/>
+        <use href="#leaf" fill="#a9b99a" transform="rotate(172) translate(0 -69) rotate(161) scale(1.03)"/>
+        <use href="#leaf" fill="#88a07a" transform="rotate(180) translate(0 -71.5) rotate(206) scale(1.28)"/>
+        <use href="#leaf" fill="#7f9471" transform="rotate(188) translate(0 -74) rotate(157) scale(1.05)"/>
+        <use href="#leaf" fill="#95a886" transform="rotate(196) translate(0 -69) rotate(200) scale(1.12)"/>
+        <use href="#leaf" fill="#6b7f5e" transform="rotate(204) translate(0 -71.5) rotate(153) scale(1.19)"/>
+        <use href="#leaf" fill="#a9b99a" transform="rotate(212) translate(0 -74) rotate(24) scale(1.26)"/>
+        <use href="#leaf" fill="#88a07a" transform="rotate(220) translate(0 -69) rotate(-21) scale(1.03)"/>
+        <use href="#leaf" fill="#7f9471" transform="rotate(228) translate(0 -71.5) rotate(18) scale(1.1)"/>
+        <use href="#leaf" fill="#95a886" transform="rotate(236) translate(0 -74) rotate(-25) scale(1.17)"/>
+        <use href="#leaf" fill="#6b7f5e" transform="rotate(244) translate(0 -69) rotate(22) scale(1.24)"/>
+        <use href="#leaf" fill="#a9b99a" transform="rotate(252) translate(0 -71.5) rotate(-19) scale(.83)"/>
+        <use href="#leaf" fill="#88a07a" transform="rotate(260) translate(0 -74) rotate(26) scale(.9)"/>
+        <use href="#leaf" fill="#7f9471" transform="rotate(268) translate(0 -69) rotate(-23) scale(.97)"/>
+        <use href="#leaf" fill="#95a886" transform="rotate(276) translate(0 -71.5) rotate(20) scale(1.04)"/>
+        <use href="#leaf" fill="#6b7f5e" transform="rotate(284) translate(0 -74) rotate(-27) scale(1.11)"/>
+        <use href="#leaf" fill="#a9b99a" transform="rotate(292) translate(0 -69) rotate(24) scale(.88)"/>
+        <use href="#leaf" fill="#88a07a" transform="rotate(300) translate(0 -71.5) rotate(-21) scale(.95)"/>
+        <use href="#leaf" fill="#7f9471" transform="rotate(18) translate(0 -70) rotate(200) scale(.7)"/>
+        <use href="#leaf" fill="#95a886" transform="rotate(28) translate(0 -72) rotate(160) scale(.78)"/>
+        <use href="#leaf" fill="#6b7f5e" transform="rotate(38) translate(0 -70) rotate(200) scale(.86)"/>
+        <use href="#leaf" fill="#a9b99a" transform="rotate(48) translate(0 -72) rotate(-20) scale(.7)"/>
+        <use href="#leaf" fill="#88a07a" transform="rotate(58) translate(0 -70) rotate(20) scale(.78)"/>
+        <use href="#leaf" fill="#7f9471" transform="rotate(68) translate(0 -72) rotate(-20) scale(.86)"/>
+        <use href="#leaf" fill="#95a886" transform="rotate(78) translate(0 -70) rotate(20) scale(.7)"/>
+        <use href="#rose-ivory" transform="rotate(180) translate(0 -70) rotate(-160) scale(.72)"/>
+        <use href="#rose" transform="rotate(207) translate(0 -69) rotate(-190) scale(1.2)"/>
+        <use href="#rose-ivory" transform="rotate(234) translate(0 -71) rotate(-220) scale(.9)"/>
+        <use href="#rose" transform="rotate(48) translate(0 -69) rotate(-30) scale(.85)"/>
+        <g fill="#fffaf0" stroke="#d9c7a6" stroke-width=".4">
+          <circle cx="-52" cy="58" r="1.8"/><circle cx="-60" cy="50" r="1.4"/><circle cx="-47" cy="66" r="1.5"/>
+          <circle cx="-72" cy="34" r="1.6"/><circle cx="-76" cy="24" r="1.2"/><circle cx="-30" cy="72" r="1.4"/>
+          <circle cx="58" cy="-44" r="1.5"/><circle cx="64" cy="-34" r="1.2"/>
+        </g>
+        <g fill="url(#g-gold)">
+          <circle cx="-17" cy="70" r="2.2"/><circle cx="-66" cy="-31" r="2"/><circle cx="72" cy="-14" r="2"/>
+          <use href="#twinkle" transform="translate(-88 6) scale(.8)"/>
+          <use href="#twinkle" transform="translate(40 -84) scale(.6)"/>
+          <use href="#twinkle" transform="translate(-34 88) scale(.5)"/>
+        </g>
+      </g>
+
+      <g id="flourish" fill="none" stroke="currentColor" stroke-linecap="round">
+        <path d="M8 12H92M148 12H232" stroke-width=".8"/>
+        <path d="M92 12c8-9 18-9 20-2s-6 9-10 4" stroke-width="1"/>
+        <path d="M148 12c-8-9-18-9-20-2s6 9 10 4" stroke-width="1"/>
+        <path d="M120 5l5 7-5 7-5-7z" fill="currentColor" stroke="none"/>
+      </g>
+    </defs>
+  </svg>
+
+  <!-- Cover: closed theatre curtains -->
+  <div class="cover" id="cover">
+    <div class="cover__drape cover__drape--left" aria-hidden="true"></div>
+    <div class="cover__drape cover__drape--right" aria-hidden="true"></div>
+    <div class="cover__card text-center">
+      <p class="eyebrow mb-2">The Wedding of</p>
+      <h1 class="cover__names">Nadiya <span class="amp">&amp;</span> Arga</h1>
+      <svg class="flourish" viewBox="0 0 240 24" aria-hidden="true"><use href="#flourish"/></svg>
+      <p class="cover__line">A fairytale told in seven little chapters</p>
+      <button type="button" class="btn btn-storybook" id="openStory" disabled>
+        <span class="btn-storybook__label">Preparing the storybook…</span>
+      </button>
+    </div>
+  </div>
+
+  <main>
+    <!-- The storybook: each chapter is a layered watercolour painting.
+         data-focus: region of the photo kept in view (x0 y0 x1 y1, 0–1)
+         data-portal: centre of the wreath leading to the next chapter (x y, 0–1 of the screen)
+         data-depth on a layer: 0 = back wall … 1 = touching the camera -->
+    <section class="story" id="story" aria-label="Our story">
+      <div class="story__stage" id="stage">
+
+        <figure class="scene" data-focus="0.06 0.16 0.68 0.86" data-portal="0.67 0.19" style="--tint: #f3e6dc">
+          <div class="scene__art" style="--ar: 1824 / 1217">
+            <img class="layer" src="assets/scenes/invitation/far.webp" data-depth="0" width="1824" height="1217" decoding="async"
+                 alt="Watercolour painting of the wedding invitation suite: cards, gold wax seals and two wedding rings on soft tulle.">
+            <img class="layer" src="assets/scenes/invitation/near.webp" data-depth="0.6" width="1824" height="1217" decoding="async" alt="">
+          </div>
+          <figcaption class="scene__caption">
+            <span class="chapter">Chapter I</span>
+            <h2 class="scene__title">Once Upon a Time</h2>
+            <p>…a love story was written in ink and gold, sealed with wax and two little rings.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="scene" data-focus="0.2 0.26 0.76 0.98" data-portal="0.27 0.24" style="--tint: #ecefe4">
+          <div class="scene__art" style="--ar: 1217 / 1824">
+            <img class="layer" src="assets/scenes/bride/far.webp" data-depth="0" width="1217" height="1824" decoding="async"
+                 alt="Watercolour painting of the bride in a white lace kebaya and a silver Sundanese crown hung with jasmine.">
+            <img class="layer" src="assets/scenes/bride/near.webp" data-depth="0.45" width="1217" height="1824" decoding="async" alt="">
+          </div>
+          <figcaption class="scene__caption">
+            <span class="chapter">Chapter II</span>
+            <h2 class="scene__title">The Princess</h2>
+            <p>Crowned in silver and strands of jasmine, she waited for the day her story would begin.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="scene" data-focus="0.24 0.24 0.84 0.86" data-portal="0.5 0.15" style="--tint: #f4e9d8">
+          <div class="scene__art" style="--ar: 1824 / 1217">
+            <img class="layer" src="assets/scenes/vow/far.webp" data-depth="0" width="1824" height="1217" decoding="async" loading="lazy"
+                 alt="Watercolour painting of the akad nikah: the groom in white shakes hands with the officiant to seal the marriage vow.">
+            <img class="layer" src="assets/scenes/vow/mid.webp" data-depth="0.4" width="1824" height="1217" decoding="async" loading="lazy" alt="">
+            <img class="layer" src="assets/scenes/vow/near.webp" data-depth="0.75" width="1824" height="1217" decoding="async" loading="lazy" alt="">
+          </div>
+          <figcaption class="scene__caption">
+            <span class="chapter">Chapter III</span>
+            <h2 class="scene__title">The Promise</h2>
+            <p>With one handshake and one breath, a sacred vow was spoken, and two lives became one.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="scene" data-focus="0.12 0.34 0.88 0.88" data-portal="0.5 0.16" style="--tint: #e6ecdf">
+          <div class="scene__art" style="--ar: 1216 / 1824">
+            <img class="layer" src="assets/scenes/family/far.webp" data-depth="0" width="1216" height="1824" decoding="async" loading="lazy"
+                 alt="Watercolour painting of the bride and groom in white with two family members beneath a floral arch on a hilltop lawn.">
+            <img class="layer" src="assets/scenes/family/near.webp" data-depth="0.45" width="1216" height="1824" decoding="async" loading="lazy" alt="">
+          </div>
+          <figcaption class="scene__caption">
+            <span class="chapter">Chapter IV</span>
+            <h2 class="scene__title">Blessed by Family</h2>
+            <p>Beneath an arch of roses, with the ones who love them most beside them.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="scene" data-focus="0.3 0.3 0.72 0.96" data-portal="0.24 0.17" style="--tint: #f2e1dc">
+          <div class="scene__art" style="--ar: 1824 / 1217">
+            <img class="layer" src="assets/scenes/procession/far.webp" data-depth="0" width="1824" height="1217" decoding="async" loading="lazy"
+                 alt="Watercolour painting of the bride and groom in maroon velvet and gold regalia walking arm in arm, framed by flowers.">
+            <img class="layer" src="assets/scenes/procession/mid.webp" data-depth="0.4" width="1824" height="1217" decoding="async" loading="lazy" alt="">
+            <img class="layer" src="assets/scenes/procession/near.webp" data-depth="0.75" width="1824" height="1217" decoding="async" loading="lazy" alt="">
+          </div>
+          <figcaption class="scene__caption">
+            <span class="chapter">Chapter V</span>
+            <h2 class="scene__title">A Royal Procession</h2>
+            <p>Clad in velvet and gold, the prince and princess walked into the great hall.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="scene" data-focus="0.18 0.2 0.64 0.98" data-portal="0.76 0.16" style="--tint: #f5ecd9">
+          <div class="scene__art" style="--ar: 1824 / 1218">
+            <img class="layer" src="assets/scenes/aisle/far.webp" data-depth="0" width="1824" height="1218" decoding="async" loading="lazy"
+                 alt="Watercolour painting of the bride and groom walking through glowing fairy lights and white flowers, followed by family.">
+            <img class="layer" src="assets/scenes/aisle/mid.webp" data-depth="0.4" width="1824" height="1218" decoding="async" loading="lazy" alt="">
+            <img class="layer" src="assets/scenes/aisle/near.webp" data-depth="0.75" width="1824" height="1218" decoding="async" loading="lazy" alt="">
+          </div>
+          <figcaption class="scene__caption">
+            <span class="chapter">Chapter VI</span>
+            <h2 class="scene__title">The Garden of Lights</h2>
+            <p>Past blossoms and a thousand tiny lights, they walked on, side by side.</p>
+          </figcaption>
+        </figure>
+
+        <figure class="scene" data-focus="0.2 0.22 0.8 0.8" style="--tint: #f3e3d6">
+          <div class="scene__art" style="--ar: 1824 / 1218">
+            <img class="layer" src="assets/scenes/stage/far.webp" data-depth="0" width="1824" height="1218" decoding="async" loading="lazy"
+                 alt="Watercolour painting of the bride and groom with their families on an ornate wedding stage filled with flowers.">
+            <img class="layer" src="assets/scenes/stage/mid.webp" data-depth="0.35" width="1824" height="1218" decoding="async" loading="lazy" alt="">
+            <img class="layer" src="assets/scenes/stage/near.webp" data-depth="0.7" width="1824" height="1218" decoding="async" loading="lazy" alt="">
+          </div>
+          <figcaption class="scene__caption">
+            <span class="chapter">Chapter VII</span>
+            <h2 class="scene__title">Happily Ever After</h2>
+            <p>And in a palace of flowers, surrounded by family, their forever began.</p>
+          </figcaption>
+        </figure>
+
+        <div class="stage-frame" aria-hidden="true">
+          <img class="stage-frame__tail stage-frame__tail--left" src="assets/ornaments/drape-tail.webp" alt="">
+          <img class="stage-frame__tail stage-frame__tail--right" src="assets/ornaments/drape-tail.webp" alt="">
+        </div>
+        <canvas class="stage-sparkles" id="sparkles" aria-hidden="true"></canvas>
+
+        <div class="stage-hud">
+          <p class="stage-hud__chapter" id="chapterLabel" aria-live="polite"></p>
+          <button type="button" class="btn btn-hud" id="playToggle" aria-pressed="false">Play story</button>
+        </div>
+        <p class="scroll-cue" id="scrollCue" aria-hidden="true">Scroll to turn the page</p>
+      </div>
+    </section>
+
+    <section class="finale" id="finale" aria-labelledby="finaleTitle">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-10 col-lg-7">
+            <article class="finale__card text-center">
+              <p class="eyebrow">The End… and the Beginning</p>
+              <h2 class="finale__names" id="finaleTitle">Nadiya <span class="amp">&amp;</span> Arga</h2>
+              <svg class="flourish" viewBox="0 0 240 24" aria-hidden="true"><use href="#flourish"/></svg>
+              <p class="finale__full">dr. Nadiya Dewi Kusnadi<br><span class="finale__with">with</span><br>Arga Wahyudi Muslim, S.Si</p>
+              <div class="row g-3 justify-content-center finale__details">
+                <div class="col-12 col-sm-6">
+                  <h3 class="finale__label">Akad Nikah</h3>
+                  <p>Saturday, 22 July 2023<br>Family only</p>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <h3 class="finale__label">Reception</h3>
+                  <p>Saturday, 22 July 2023<br>13.00 – 16.00 WIB</p>
+                </div>
+              </div>
+              <p class="finale__venue">Hotel Best Western Premier Panbil<br>Sissoding Ballroom, 1st Floor · Batam</p>
+              <button type="button" class="btn btn-storybook btn-storybook--ghost" id="replayStory">Read the story again</button>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/main.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
+</body>
+</html>

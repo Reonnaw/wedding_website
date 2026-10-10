@@ -1,0 +1,554 @@
+/* ==========================================================================
+   Nadiya & Arga — watercolour storybook invitation
+   ========================================================================== */
+
+/* ---------- Tokens ------------------------------------------------------- */
+:root {
+  --paper: #f6efe4;            /* keep in sync with PAPER_BGR in tools/build_scenes.py */
+  --paper-shade: #ece1cf;
+  --ink: #4a3b32;
+  --ink-soft: #7a6656;
+  --gold: #b8975a;
+  --gold-deep: #8c6a32;
+  --gold-light: #e3cd98;
+  --sage: #7d8f6e;
+  --sage-deep: #4f5f45;
+  --blush: #e8c4c0;
+  --rose: #c98e8a;
+
+  --font-script: "Pinyon Script", "Snell Roundhand", cursive;
+  --font-serif: "Cormorant Garamond", "Cormorant", Garamond, Georgia, serif;
+  --font-caps: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+
+  --bs-body-bg: var(--paper);
+  --bs-body-color: var(--ink);
+  --bs-body-font-family: var(--font-serif);
+  --bs-body-font-size: 1.125rem;
+  --bs-body-line-height: 1.6;
+  --bs-link-color-rgb: 140, 106, 50;
+}
+
+/* ---------- Base --------------------------------------------------------- */
+html {
+  color-scheme: light;
+  scroll-behavior: auto;
+}
+
+html.cover-open,
+html.cover-open body {
+  overflow: hidden;
+}
+
+body {
+  background: var(--paper) url("../assets/textures/paper.webp") 0 0 / 512px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.eyebrow {
+  font-family: var(--font-caps);
+  font-size: .78rem;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.amp {
+  font-family: var(--font-script);
+  color: var(--rose);
+  padding-inline: .08em;
+}
+
+.flourish {
+  display: block;
+  width: min(240px, 62%);
+  height: auto;
+  margin: .4rem auto 1rem;
+  color: var(--gold);
+}
+
+/* ---------- Buttons ------------------------------------------------------ */
+.btn-storybook {
+  --bs-btn-padding-x: 1.7rem;
+  --bs-btn-padding-y: .75rem;
+  --bs-btn-font-family: var(--font-caps);
+  --bs-btn-font-size: .78rem;
+  --bs-btn-font-weight: 500;
+  --bs-btn-color: var(--paper);
+  --bs-btn-bg: var(--sage-deep);
+  --bs-btn-border-color: var(--gold);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #43523b;
+  --bs-btn-hover-border-color: var(--gold-light);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #3a4733;
+  --bs-btn-active-border-color: var(--gold-light);
+  --bs-btn-disabled-color: var(--paper);
+  --bs-btn-disabled-bg: var(--sage);
+  --bs-btn-disabled-border-color: var(--gold);
+  --bs-btn-disabled-opacity: .85;
+  --bs-btn-focus-shadow-rgb: 184, 151, 90;
+  --bs-btn-border-radius: 999px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px rgb(184 151 90 / .55);
+}
+
+.btn-storybook--ghost {
+  --bs-btn-color: var(--ink);
+  --bs-btn-bg: transparent;
+  --bs-btn-hover-color: var(--paper);
+  --bs-btn-hover-bg: var(--sage-deep);
+  box-shadow: none;
+}
+
+.btn-hud {
+  --bs-btn-padding-x: .9rem;
+  --bs-btn-padding-y: .3rem;
+  --bs-btn-font-family: var(--font-caps);
+  --bs-btn-font-size: .68rem;
+  --bs-btn-color: var(--ink);
+  --bs-btn-bg: rgb(246 239 228 / .82);
+  --bs-btn-border-color: rgb(184 151 90 / .6);
+  --bs-btn-hover-color: var(--ink);
+  --bs-btn-hover-bg: var(--paper);
+  --bs-btn-hover-border-color: var(--gold);
+  --bs-btn-active-bg: var(--paper-shade);
+  --bs-btn-active-border-color: var(--gold);
+  --bs-btn-focus-shadow-rgb: 184, 151, 90;
+  --bs-btn-border-radius: 999px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+}
+
+/* ---------- Cover: closed theatre curtains ------------------------------- */
+.cover {
+  display: none;
+}
+
+.js .cover {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  overflow: hidden;
+}
+
+.cover[hidden] {
+  display: none;
+}
+
+.cover__drape {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 51%;
+  transition: transform 1.9s cubic-bezier(.66, 0, .22, 1), opacity .7s ease 1.3s;
+}
+
+.cover__drape::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ornaments/drape-panel.webp") 0 0 / 100% 100% no-repeat;
+}
+
+.cover__drape--left {
+  left: 0;
+  transform-origin: 0 50%;
+}
+
+.cover__drape--right {
+  right: 0;
+  transform-origin: 100% 50%;
+}
+
+.cover__drape--right::before {
+  transform: scaleX(-1);
+}
+
+.cover::after {
+  /* shadow under the curtain rail */
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 22vh;
+  background: linear-gradient(rgb(28 36 24 / .55), transparent);
+  pointer-events: none;
+  transition: opacity 1s ease .6s;
+}
+
+.cover__card {
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 25rem);
+  padding: 3.4rem 1.6rem 2.3rem;
+  background: var(--paper) url("../assets/textures/paper.webp") 0 0 / 512px;
+  border-radius: 12.5rem 12.5rem 1.25rem 1.25rem;
+  box-shadow:
+    inset 0 0 0 1px rgb(184 151 90 / .6),
+    inset 0 0 0 7px var(--paper),
+    inset 0 0 0 8px rgb(184 151 90 / .45),
+    0 1.6rem 3.2rem rgb(24 32 20 / .5);
+  transition: opacity .7s ease, transform 1s cubic-bezier(.5, 0, .2, 1);
+}
+
+.cover__names {
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(3rem, 14vw, 4.7rem);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.cover__line {
+  margin-bottom: 1.7rem;
+  font-style: italic;
+  font-size: 1.18rem;
+  color: var(--ink-soft);
+}
+
+.cover.is-open .cover__drape {
+  transform: scaleX(.12);
+  opacity: 0;
+}
+
+.cover.is-open .cover__card {
+  opacity: 0;
+  transform: translateY(-2.5rem) scale(.96);
+  pointer-events: none;
+}
+
+.cover.is-open::after {
+  opacity: 0;
+}
+
+/* ---------- Story: static storybook (no JS / reduced motion) ------------- */
+.story {
+  padding: 4rem 1rem 1rem;
+}
+
+.story__stage {
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+.scene {
+  margin: 0 0 4.5rem;
+}
+
+.scene__art {
+  position: relative;
+  aspect-ratio: var(--ar);
+}
+
+.scene__art .layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scene__caption {
+  padding: 1rem 1rem 0;
+  text-align: center;
+}
+
+.chapter {
+  display: block;
+  font-family: var(--font-caps);
+  font-size: .74rem;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.scene__title {
+  margin: .08em 0 .12em;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(2.3rem, 8vw, 3.8rem);
+  line-height: 1.12;
+  color: var(--ink);
+}
+
+.scene__caption p {
+  max-width: 31ch;
+  margin: 0 auto;
+  font-style: italic;
+  font-size: clamp(1.08rem, 3.6vw, 1.38rem);
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.stage-frame,
+.stage-sparkles,
+.stage-hud,
+.scroll-cue {
+  display: none;
+}
+
+/* ---------- Story: 3D zoom stage ----------------------------------------- */
+.js-3d .story {
+  padding: 0;
+}
+
+.js-3d .story__stage {
+  --drape-w: clamp(96px, 24vw, 300px);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  max-width: none;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--paper);
+}
+
+.js-3d .scene {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: none;
+}
+
+.js-3d .scene.is-live {
+  display: block;
+}
+
+.js-3d .scene__art {
+  position: static;
+  aspect-ratio: auto;
+}
+
+.js-3d .scene__art .layer,
+.js-3d .scene__paper,
+.js-3d .wreath {
+  position: absolute;
+  inset: auto;
+  max-width: none;
+  backface-visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.js-3d .scene__art .layer,
+.js-3d .scene__paper {
+  will-change: transform, opacity;
+}
+
+.js-3d .scene__paper {
+  background: var(--tint, var(--paper)) url("../assets/textures/paper.webp") 0 0 / 512px;
+  transform-origin: 50% 50%;
+}
+
+.js-3d .wreath {
+  overflow: visible;
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 2px 3px rgb(74 59 50 / .25));
+}
+
+.js-3d .scene__caption {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 700;
+  padding: 6rem 1.25rem calc(2.9rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgb(246 239 228 / .97) 32%, rgb(246 239 228 / .78) 62%, rgb(246 239 228 / 0));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.js-3d .stage-frame {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 650;
+  pointer-events: none;
+}
+
+.stage-frame::before {
+  /* warm chandelier light from above */
+  content: "";
+  position: absolute;
+  inset: -30vh 15% auto;
+  height: 60vh;
+  background: radial-gradient(closest-side, rgb(255 236 190 / .55), rgb(255 236 190 / 0));
+  mix-blend-mode: soft-light;
+}
+
+.stage-frame__tail {
+  position: absolute;
+  top: 0;
+  width: var(--drape-w);
+  height: 100%;
+  max-width: none;
+  object-fit: fill;            /* folds simply gather tighter on narrow screens */
+  filter: drop-shadow(0 .5rem .9rem rgb(30 40 26 / .3));
+}
+
+.stage-frame__tail--left {
+  left: 0;
+}
+
+.stage-frame__tail--right {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.js-3d .stage-sparkles {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 660;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.js-3d .stage-hud {
+  position: absolute;
+  inset: calc(.75rem + env(safe-area-inset-top)) 0 auto;
+  z-index: 720;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+  pointer-events: none;
+}
+
+.stage-hud__chapter {
+  margin: 0;
+  font-family: var(--font-caps);
+  font-size: .66rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: 0 0 6px var(--paper), 0 0 12px var(--paper);
+}
+
+.stage-hud .btn {
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  /* wreaths often float near the top on wide screens; keep the HUD out of their way */
+  .js-3d .stage-hud {
+    inset: auto calc(var(--drape-w) * .3 + 1.25rem) calc(1.5rem + env(safe-area-inset-bottom)) auto;
+    align-items: flex-end;
+  }
+}
+
+.js-3d .scroll-cue {
+  display: block;
+  position: absolute;
+  inset: auto 0 calc(.7rem + env(safe-area-inset-bottom));
+  z-index: 710;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-caps);
+  font-size: .62rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  opacity: 0;
+  transition: opacity .6s ease;
+  pointer-events: none;
+}
+
+.scroll-cue::after {
+  content: "";
+  display: block;
+  width: .5rem;
+  height: .5rem;
+  margin: .35rem auto 0;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+  animation: cue-bob 1.8s ease-in-out infinite;
+}
+
+.scroll-cue.is-visible {
+  opacity: 1;
+}
+
+@keyframes cue-bob {
+  50% { transform: translateY(.3rem) rotate(45deg); }
+}
+
+/* ---------- Finale ------------------------------------------------------- */
+.finale {
+  position: relative;
+  padding: clamp(4rem, 10vw, 7rem) 0;
+}
+
+.finale__card {
+  padding: clamp(2.5rem, 6vw, 3.5rem) clamp(1.25rem, 5vw, 3rem);
+  background: rgb(255 252 246 / .72);
+  border: 1px solid rgb(184 151 90 / .55);
+  border-radius: 1.25rem;
+  outline: 1px solid rgb(184 151 90 / .3);
+  outline-offset: -10px;
+  box-shadow: 0 1.5rem 3rem rgb(74 59 50 / .08);
+}
+
+.finale__names {
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(3rem, 11vw, 4.8rem);
+  line-height: 1.1;
+}
+
+.finale__full {
+  font-size: 1.3rem;
+  line-height: 1.45;
+}
+
+.finale__with {
+  font-family: var(--font-script);
+  font-size: 1.7rem;
+  color: var(--rose);
+}
+
+.finale__details {
+  margin: 1.5rem 0 .5rem;
+}
+
+.finale__label {
+  margin-bottom: .35rem;
+  font-family: var(--font-caps);
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.finale__venue {
+  margin: 1rem 0 2rem;
+  font-style: italic;
+  font-size: 1.2rem;
+}
+
+/* ---------- Motion preferences ------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .cover__drape,
+  .cover__card,
+  .cover::after {
+    transition: none;
+  }
+
+  .scroll-cue::after {
+    animation: none;
+  }
+}
