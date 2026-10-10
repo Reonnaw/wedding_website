@@ -1,10 +1,5 @@
-/* ==========================================================================
-   Nadiya & Arga — watercolour storybook invitation
-   ========================================================================== */
-
-/* ---------- Tokens ------------------------------------------------------- */
 :root {
-  --paper: #f6efe4;            /* keep in sync with PAPER_BGR in tools/build_scenes.py */
+  --paper: #f6efe4;            
   --paper-shade: #ece1cf;
   --ink: #4a3b32;
   --ink-soft: #7a6656;
