@@ -58,7 +58,60 @@
     document.querySelectorAll('.layer[loading="lazy"]').forEach((img) => { img.loading = 'eager'; });
   });
 
+  /* ---------- Music ------------------------------------------------------ */
+  const song = document.getElementById('song');
+  const musicBtn = document.getElementById('musicToggle');
+  const SONG_VOLUME = 0.7;
+  let wantMusic = false;     // the guest's choice, kept while the tab is hidden
+  let fading = 0;
+
+  // iOS ignores volume changes, so there the song simply starts and stops.
+  function fadeTo(target, ms, done) {
+    cancelAnimationFrame(fading);
+    const from = song.volume;
+    const start = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, (now - start) / ms);
+      song.volume = from + (target - from) * k;
+      if (k < 1) fading = requestAnimationFrame(step);
+      else if (done) done();
+    };
+    fading = requestAnimationFrame(step);
+  }
+
+  function playMusic() {
+    wantMusic = true;
+    if (!song.paused) {           // caught mid fade-out: just swell back up
+      fadeTo(SONG_VOLUME, 600);
+      return;
+    }
+    cancelAnimationFrame(fading);
+    song.volume = 0;
+    song.play().then(() => fadeTo(SONG_VOLUME, 2500)).catch(() => { wantMusic = false; });
+  }
+
+  function pauseMusic() {
+    wantMusic = false;
+    fadeTo(0, 400, () => song.pause());
+  }
+
+  const showMusicState = (on) => {
+    musicBtn.classList.toggle('is-playing', on);
+    musicBtn.setAttribute('aria-pressed', String(on));
+  };
+  song.addEventListener('play', () => showMusicState(true));
+  song.addEventListener('pause', () => showMusicState(false));
+  song.addEventListener('error', () => { musicBtn.hidden = true; });
+  musicBtn.addEventListener('click', () => (wantMusic ? pauseMusic() : playMusic()));
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) song.pause();
+    else if (wantMusic) playMusic();
+  });
+
   openBtn.addEventListener('click', () => {
+    playMusic();                // must start inside the click: browsers block audio without one
+    musicBtn.hidden = !!song.error;
     window.scrollTo({ top: 0, behavior: 'instant' });
     cover.classList.add('is-open');
     root.classList.remove('cover-open');
