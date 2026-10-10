@@ -1,17 +1,3 @@
-"""Turn the photos in ../photos into layered watercolour "pop-up" scenes.
-
-Each photo is split into depth layers (far / mid / near) using a monocular
-depth model, the background behind the subjects is filled in, every layer is
-painted with a watercolour filter, and the result is written as same-sized
-transparent WebP files that js/main.js stacks and moves in 3D.
-
-    python -m venv .venv && .venv/Scripts/pip install -r tools/requirements.txt
-    .venv/Scripts/python tools/build_scenes.py            # build every scene
-    .venv/Scripts/python tools/build_scenes.py --preview  # also write mask previews
-
-The depth model (Depth Anything V2 Small, Apache-2.0) is downloaded on first
-run into tools/.cache/.
-"""
 import argparse
 import os
 import urllib.request
@@ -27,11 +13,10 @@ OUT = os.path.join(ROOT, "assets", "scenes")
 CACHE = os.path.join(ROOT, "tools", ".cache")
 MODEL_URL = "https://huggingface.co/onnx-community/depth-anything-v2-small/resolve/main/onnx/model.onnx"
 
-CORE = 1600   # long side of the painted photo, px
-PAD = 0.07    # bleed margin around the photo, fraction of each side
-PAPER_BGR = np.array([228, 239, 246], np.float32) / 255   # --paper in css/style.css
+CORE = 1600
+PAD = 0.07
+PAPER_BGR = np.array([228, 239, 246], np.float32) / 255
 
-# cuts: depth thresholds (0 = farthest, 1 = nearest) between consecutive layers.
 SCENES = [
     dict(id="invitation", src="IMG_3324.jpg", cuts=[0.42]),
     dict(id="bride", src="IMG_2393.jpg", cuts=[0.40]),
@@ -44,7 +29,6 @@ SCENES = [
 LAYER_NAMES = {1: ["far", "near"], 2: ["far", "mid", "near"]}
 
 
-# ---------------------------------------------------------------- depth model
 def load_model():
     path = os.path.join(CACHE, "depth_anything_v2_small.onnx")
     if not os.path.exists(path):
@@ -66,7 +50,6 @@ def estimate_depth(sess, bgr, long_side=1022):
     return np.clip((d - lo) / (hi - lo + 1e-6), 0, 1).astype(np.float32)
 
 
-# ---------------------------------------------------------------- helpers
 def fbm(h, w, seed, octaves=5, base=6):
     rng = np.random.default_rng(seed)
     acc = np.zeros((h, w), np.float32)
@@ -110,14 +93,12 @@ def push_pull_fill(img, known):
     return np.where(known[..., None] > 0.5, img, filled)
 
 
-# ---------------------------------------------------------------- watercolour
 def watercolor(bgr8, seed=3):
     h, w = bgr8.shape[:2]
     base = cv2.edgePreservingFilter(bgr8, flags=cv2.RECURS_FILTER, sigma_s=30, sigma_r=0.3)
     base = cv2.pyrMeanShiftFiltering(base, sp=8, sr=16)
     a = base.astype(np.float32) / 255
 
-    # hand-painted wobble
     nx = (fbm(h, w, seed, 3, 8) - 0.5) * 3.2
     ny = (fbm(h, w, seed + 1, 3, 8) - 0.5) * 3.2
     gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
@@ -128,17 +109,14 @@ def watercolor(bgr8, seed=3):
     g = np.sqrt(cv2.Sobel(bl, cv2.CV_32F, 1, 0) ** 2 + cv2.Sobel(bl, cv2.CV_32F, 0, 1) ** 2)
     g = np.clip(g / max(np.percentile(g, 97), 0.5), 0, 1)
 
-    # wet-in-wet softening of flat washes, pigment pooling along edges
     flat = ((1 - g) ** 2)[..., None]
     a = a * (1 - 0.55 * flat) + cv2.GaussianBlur(a, (0, 0), 2.2) * 0.55 * flat
     a *= (1 - 0.18 * cv2.GaussianBlur(g, (0, 0), 0.8))[..., None]
 
-    # soft sepia ink line
     dog = cv2.GaussianBlur(lum, (0, 0), 0.9) - cv2.GaussianBlur(lum, (0, 0), 1.8)
     line = cv2.GaussianBlur(np.clip((-dog - 0.006) * 34, 0, 1), (0, 0), 0.5)[..., None] * 0.38
     a = a * (1 - line) + np.array([0.32, 0.38, 0.5], np.float32) * line
 
-    # storybook grade: pastel, warm, lifted shadows, glowing highlights
     hsv = cv2.cvtColor(np.clip(a, 0, 1), cv2.COLOR_BGR2HSV)
     hsv[..., 1] *= 0.86
     a = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
@@ -148,7 +126,6 @@ def watercolor(bgr8, seed=3):
     hi = np.clip((a - 0.78) / 0.22, 0, 1)
     a = 1 - (1 - a) * (1 - 0.35 * cv2.GaussianBlur(hi, (0, 0), 14))
 
-    # pigment granulates and clumps, untouched paper stays clean
     pigment = 1 - np.clip(a, 0, 1)
     pigment *= (0.82 + 0.36 * fbm(h, w, 11, 6, 40))[..., None]
     pigment *= (0.9 + 0.2 * fbm(h, w, 12, 3, 120))[..., None]
@@ -167,7 +144,6 @@ def bleed_mask(h, w, pad_x, pad_y, seed):
     return 1 - smoothstep(-0.035, 0.05, sd + n * 0.07)
 
 
-# ---------------------------------------------------------------- build
 def build(scene, sess, preview):
     src = cv2.imdecode(np.fromfile(os.path.join(PHOTOS, scene["src"]), np.uint8), cv2.IMREAD_COLOR)
     s = CORE / max(src.shape[:2])

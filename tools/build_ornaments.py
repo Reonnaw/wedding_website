@@ -1,11 +1,3 @@
-"""Paint the theatre drapes and the paper texture used around the storybook.
-
-    .venv/Scripts/python tools/build_ornaments.py
-
-Writes assets/ornaments/drape-panel.webp (closed curtain, left half),
-assets/ornaments/drape-tail.webp (tied-back corner drape, left side) and
-assets/textures/paper.webp (seamless watercolour paper tile).
-"""
 import os
 
 import cv2
@@ -29,10 +21,10 @@ def velvet(u, y, folds, seed):
     fold = 0.5 + 0.5 * np.cos(phase)
     sheen = np.clip(np.cos(phase - 0.9), 0, 1) ** 6
     shade = 0.18 + 0.62 * fold ** 0.8 + 0.22 * sheen
-    shade *= 0.78 + 0.22 * smoothstep(0, 0.25, y)          # shadow under the rail
-    shade *= 0.9 + 0.1 * fbm(h, w, seed + 7, 5, 24)        # pigment granulation
+    shade *= 0.78 + 0.22 * smoothstep(0, 0.25, y)
+    shade *= 0.9 + 0.1 * fbm(h, w, seed + 7, 5, 24)
     rgb = SAGE_DARK + (SAGE_LIGHT - SAGE_DARK) * np.clip(shade, 0, 1)[..., None]
-    valley = np.clip(1 - fold * 3, 0, 1) ** 2               # watercolour pooling in folds
+    valley = np.clip(1 - fold * 3, 0, 1) ** 2
     return rgb * (1 - 0.18 * valley[..., None])
 
 
@@ -62,7 +54,7 @@ def drape_panel(w=900, h=1800):
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
     u, y = xx / w, yy / h
     rgb = velvet(u, y, 7.5, 21)
-    edge = smoothstep(w - 1, w - 26, xx)                  # rounded leading edge
+    edge = smoothstep(w - 1, w - 26, xx)
     rgb *= (0.75 + 0.25 * edge)[..., None]
     alpha = np.ones((h, w), np.float32)
     fringe(rgb, alpha, h - 70, 64, 0, w)
@@ -75,7 +67,6 @@ def drape_tail(w=700, h=2400):
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
     y = yy / h
     tie = 0.36
-    # inner edge of the cloth: sweeps from the top across to the tie-back, then flares a little
     upper = 0.96 - 0.8 * smoothstep(0, tie, y) ** 0.7
     lower = 0.16 + 0.1 * smoothstep(tie, 1, y)
     edge = np.where(y < tie, upper, lower) * w
@@ -83,10 +74,8 @@ def drape_tail(w=700, h=2400):
     u = np.clip(xx / np.maximum(edge, 1), 0, 1.2)
     rgb = velvet(u, y, 6.0, 33)
     alpha = smoothstep(edge + 1.5, edge - 1.5, xx)
-    # the cloth turns away from the light towards its inner edge
     rgb *= (0.7 + 0.3 * smoothstep(1.0, 0.55, u))[..., None]
 
-    # tie-back rope and tassel
     cy, cx = int(tie * h), int(0.12 * w)
     rope = np.exp(-(((yy - cy) / 16) ** 2)) * smoothstep(edge * 1.25, edge * 1.05, xx)
     rope_rgb = GOLD_DARK + (GOLD - GOLD_DARK) * (0.5 + 0.5 * np.cos((xx + yy) * 0.5))[..., None]
