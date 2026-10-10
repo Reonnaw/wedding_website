@@ -62,7 +62,8 @@
   const song = document.getElementById('song');
   const musicBtn = document.getElementById('musicToggle');
   const SONG_VOLUME = 0.7;
-  let wantMusic = false;     // the guest's choice, kept while the tab is hidden
+  const GESTURES = ['pointerdown', 'pointerup', 'touchend', 'keydown', 'click'];
+  let wantMusic = true;      // the song plays unless the guest switches it off
   let fading = 0;
 
   // iOS ignores volume changes, so there the song simply starts and stops.
@@ -79,19 +80,46 @@
     fading = requestAnimationFrame(step);
   }
 
-  function playMusic() {
-    wantMusic = true;
+  function startSong() {
     if (!song.paused) {           // caught mid fade-out: just swell back up
       fadeTo(SONG_VOLUME, 600);
-      return;
+      return Promise.resolve();
     }
     cancelAnimationFrame(fading);
     song.volume = 0;
-    song.play().then(() => fadeTo(SONG_VOLUME, 2500)).catch(() => { wantMusic = false; });
+    return song.play().then(() => fadeTo(SONG_VOLUME, 2500));
+  }
+
+  // Browsers usually refuse sound until the guest has interacted with the page,
+  // so try straight away and, if refused, again on their first tap or key press.
+  function onFirstGesture(ev) {
+    if (ev.target instanceof Element && ev.target.closest('.music-toggle')) return;
+    if (!wantMusic || !song.paused) {
+      waitForGesture(false);
+      return;
+    }
+    startSong().then(() => waitForGesture(false), () => {});
+  }
+
+  function waitForGesture(on) {
+    for (const type of GESTURES) {
+      if (on) window.addEventListener(type, onFirstGesture, { capture: true, passive: true });
+      else window.removeEventListener(type, onFirstGesture, { capture: true });
+    }
+  }
+
+  function autoplay() {
+    if (wantMusic) startSong().catch(() => waitForGesture(true));
+  }
+
+  function playMusic() {
+    wantMusic = true;
+    startSong().catch(() => {});
   }
 
   function pauseMusic() {
     wantMusic = false;
+    waitForGesture(false);
     fadeTo(0, 400, () => song.pause());
   }
 
@@ -102,16 +130,16 @@
   song.addEventListener('play', () => showMusicState(true));
   song.addEventListener('pause', () => showMusicState(false));
   song.addEventListener('error', () => { musicBtn.hidden = true; });
-  musicBtn.addEventListener('click', () => (wantMusic ? pauseMusic() : playMusic()));
+  musicBtn.addEventListener('click', () => (wantMusic && !song.paused ? pauseMusic() : playMusic()));
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) song.pause();
-    else if (wantMusic) playMusic();
+    else autoplay();
   });
 
+  autoplay();
+
   openBtn.addEventListener('click', () => {
-    playMusic();                // must start inside the click: browsers block audio without one
-    musicBtn.hidden = !!song.error;
     window.scrollTo({ top: 0, behavior: 'instant' });
     cover.classList.add('is-open');
     root.classList.remove('cover-open');

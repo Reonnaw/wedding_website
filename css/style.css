@@ -490,7 +490,7 @@ body {
   position: fixed;
   top: calc(.75rem + env(safe-area-inset-top));
   right: calc(.75rem + env(safe-area-inset-right));
-  z-index: 900;
+  z-index: 1100;               /* above the cover, so the song can be muted before opening */
   width: 2.9rem;
   height: 2.9rem;
   padding: 0;
