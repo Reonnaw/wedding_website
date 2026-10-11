@@ -1,6 +1,3 @@
-/* ==========================================================================
-   RSVP form — Bootstrap validation, Collapse, Modal and Toast
-   ========================================================================== */
 (() => {
   'use strict';
 
@@ -16,7 +13,6 @@
   const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('rsvpModal'));
   const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('rsvpToast'));
 
-  // Guest count only matters (and is only validated) when someone is coming.
   function syncGuests() {
     const coming = form.elements.attending.value === 'yes';
     guests.disabled = !coming;
@@ -45,11 +41,9 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(reply));
     } catch {
-      /* private browsing: the reply simply isn't remembered */
     }
   }
 
-  // Set data-endpoint on the form (e.g. a Formspree URL) to also send replies somewhere.
   function send(reply) {
     const endpoint = form.dataset.endpoint;
     if (!endpoint) return Promise.resolve();
@@ -62,7 +56,6 @@
     });
   }
 
-  // Bring back an earlier reply so guests can change their answer.
   const previous = load();
   if (previous) {
     form.elements.name.value = previous.name || '';

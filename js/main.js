@@ -1,22 +1,14 @@
-/* ==========================================================================
-   Storybook zoom
-
-   Every chapter is a watercolour painting cut into depth layers
-   (assets/scenes/<chapter>/far|mid|near.webp). Each chapter hides the next one
-   inside a floral wreath; scrolling flies the camera through the layers and
-   into the wreath, which opens onto the next chapter — an endless zoom.
-   ========================================================================== */
 (() => {
   'use strict';
 
   const root = document.documentElement;
   const use3D = root.classList.contains('js-3d');
 
-  const PAD = 0.07;          // bleed margin baked into every layer by tools/build_scenes.py
-  const REACH = 0.75;        // how far towards the camera a depth-1 layer stands (0–1)
-  const SEG = 1.4;           // viewport heights of scrolling per chapter
-  const DWELL = 0.16;        // share of a chapter's scroll spent at rest at either end
-  const CHAPTER_MS = 6500;   // autoplay pace
+  const PAD = 0.07;          
+  const REACH = 0.75;        
+  const SEG = 1.4;           
+  const DWELL = 0.16;        
+  const CHAPTER_MS = 6500;   
 
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   const smooth = (a, b, x) => {
@@ -42,7 +34,6 @@
 
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-  /* ---------- Cover ------------------------------------------------------ */
   main.inert = true;
 
   function whenReady(imgs, timeout) {
@@ -57,16 +48,14 @@
     // fetch the remaining chapters now that the first ones are in
     document.querySelectorAll('.layer[loading="lazy"]').forEach((img) => { img.loading = 'eager'; });
   });
-
-  /* ---------- Music ------------------------------------------------------ */
+  
   const song = document.getElementById('song');
   const musicBtn = document.getElementById('musicToggle');
   const SONG_VOLUME = 0.7;
   const GESTURES = ['pointerdown', 'pointerup', 'touchend', 'keydown', 'click'];
-  let wantMusic = true;      // the song plays unless the guest switches it off
+  let wantMusic = true;      
   let fading = 0;
 
-  // iOS ignores volume changes, so there the song simply starts and stops.
   function fadeTo(target, ms, done) {
     cancelAnimationFrame(fading);
     const from = song.volume;
@@ -81,7 +70,7 @@
   }
 
   function startSong() {
-    if (!song.paused) {           // caught mid fade-out: just swell back up
+    if (!song.paused) {           
       fadeTo(SONG_VOLUME, 600);
       return Promise.resolve();
     }
@@ -90,8 +79,6 @@
     return song.play().then(() => fadeTo(SONG_VOLUME, 2500));
   }
 
-  // Browsers usually refuse sound until the guest has interacted with the page,
-  // so try straight away and, if refused, again on their first tap or key press.
   function onFirstGesture(ev) {
     if (ev.target instanceof Element && ev.target.closest('.music-toggle')) return;
     if (!wantMusic || !song.paused) {
@@ -156,7 +143,6 @@
     return;
   }
 
-  /* ---------- Scenes ----------------------------------------------------- */
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const nums = (s) => (s || '').trim().split(/\s+/).map(Number);
 
@@ -194,7 +180,6 @@
   });
   const N = scenes.length;
 
-  /* ---------- Layout ----------------------------------------------------- */
   let vw = 0, vh = 0, diag = 0, K = 8, portalD = 160, storyTop = 0, storyLen = 0;
 
   function layout() {
@@ -202,7 +187,7 @@
     vh = stage.clientHeight;
     diag = Math.hypot(vw, vh);
     portalD = clamp(Math.min(vw, vh) * 0.24, 96, 240);
-    K = diag / portalD;               // zoom between chapters: the wreath grows to wrap the screen
+    K = diag / portalD;               
     storyLen = (N - 1) * SEG * vh;
     story.style.height = `${storyLen + vh}px`;
     storyTop = story.getBoundingClientRect().top + window.scrollY;
@@ -256,12 +241,11 @@
           height: `${size}px`,
         });
       }
-      s.inset = null;                 // force clip paths to be re-applied
+      s.inset = null;                 
     }
     sparkles.resize();
   }
 
-  /* ---------- Drawing ---------------------------------------------------- */
   function put(el, x, y, scale, opacity, z) {
     el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(5)})`;
     if (el._op !== opacity) {
@@ -293,8 +277,6 @@
   const sway = { x: 0, y: 0 };
   const pointer = { x: 0, y: 0 };
 
-  // Active chapter: a camera at depth 1/S moving towards the wreath.
-  // A layer at depth h sits (1 - h) of the way back, pre-shrunk so all layers line up at rest.
   function drawActive(s, S, e, still) {
     const lead = (K / (K - 1)) * (1 - 1 / S);
     const X = { x: s.c.x * lead, y: s.c.y * lead };
@@ -321,7 +303,6 @@
     return O;
   }
 
-  // A chapter still inside a wreath: a flat painting, clipped to the wreath's opening.
   function drawInset(s, S, O, slot, swayIn) {
     const back = slot === 1 ? 100 : 200;
     const front = slot === 1 ? 250 : 240;
@@ -468,7 +449,6 @@
     };
   })();
 
-  /* ---------- Autoplay --------------------------------------------------- */
   let auto = false;
   let autoPos = 0;
   let toFinale = 0;
@@ -483,7 +463,7 @@
 
   function stepAuto(dt) {
     if (Math.abs(window.scrollY - autoPos) > 3) {
-      setAuto(false);             // someone scrolled by hand
+      setAuto(false);             
       return;
     }
     const end = storyTop + storyLen;
@@ -505,7 +485,6 @@
     setAuto(true);
   });
 
-  // Reading by hand takes over from autoplay; the buttons manage it themselves.
   const handOver = (ev) => {
     if (ev.target instanceof Element && ev.target.closest('button')) return;
     if (auto) setAuto(false);
@@ -524,7 +503,6 @@
   });
   stage.addEventListener('pointerleave', () => { pointer.x = pointer.y = 0; });
 
-  /* ---------- Loop ------------------------------------------------------- */
   let running = false;
   let last = 0;
 
