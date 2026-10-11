@@ -482,7 +482,6 @@ body {
   50% { transform: translateY(.3rem) rotate(45deg); }
 }
 
-/* ---------- Zoom controls ------------------------------------------------ */
 :root {
   --pink-pale: #fbeef0;
   --pink: #f2d3d7;
@@ -620,12 +619,11 @@ body {
   transition-delay: .25s;
 }
 
-/* ---------- Music toggle ------------------------------------------------- */
 .music-toggle {
   position: fixed;
   top: calc(.75rem + env(safe-area-inset-top));
   right: calc(.75rem + env(safe-area-inset-right));
-  z-index: 1100;               /* above the cover, so the song can be muted before opening */
+  z-index: 1100;              
   width: 2.9rem;
   height: 2.9rem;
   padding: 0;
@@ -637,7 +635,7 @@ body {
 }
 
 .modal-open .music-toggle {
-  z-index: 1040;               /* under Bootstrap's modal backdrop */
+  z-index: 1040;              
 }
 
 .music-toggle[hidden] {
@@ -735,7 +733,6 @@ body {
   font-size: 1.2rem;
 }
 
-/* ---------- RSVP --------------------------------------------------------- */
 :root {
   --bs-form-valid-color: var(--sage-deep);
   --bs-form-valid-border-color: var(--sage);
@@ -841,7 +838,6 @@ body {
   filter: invert(1) grayscale(1) brightness(2);
 }
 
-/* ---------- Motion preferences ------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .cover__drape,
   .cover__card,
