@@ -496,6 +496,10 @@ body {
   transition: transform .2s ease;
 }
 
+.modal-open .music-toggle {
+  z-index: 1040;               /* under Bootstrap's modal backdrop */
+}
+
 .music-toggle[hidden] {
   display: none;
 }
@@ -589,6 +593,112 @@ body {
   margin: 1rem 0 2rem;
   font-style: italic;
   font-size: 1.2rem;
+}
+
+/* ---------- RSVP --------------------------------------------------------- */
+:root {
+  --bs-form-valid-color: var(--sage-deep);
+  --bs-form-valid-border-color: var(--sage);
+  --bs-form-invalid-color: #a2453f;
+  --bs-form-invalid-border-color: #c98680;
+}
+
+.rsvp {
+  padding: 0 0 clamp(4rem, 10vw, 7rem);
+}
+
+.rsvp__card {
+  padding: clamp(2.25rem, 6vw, 3.25rem) clamp(1.25rem, 5vw, 3rem);
+  background: rgb(255 252 246 / .72);
+  border: 1px solid rgb(184 151 90 / .55);
+  border-radius: 1.25rem;
+  box-shadow: 0 1.5rem 3rem rgb(74 59 50 / .08);
+}
+
+.rsvp__title,
+.rsvp-modal__title {
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 9vw, 3.6rem);
+  line-height: 1.15;
+}
+
+.rsvp .form-label,
+.rsvp legend {
+  margin-bottom: .35rem;
+  font-family: var(--font-caps);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.rsvp__optional {
+  font-family: var(--font-serif);
+  font-size: .95rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+
+.rsvp .form-control,
+.rsvp .form-select,
+.rsvp .input-group-text {
+  font-size: 1.12rem;
+  color: var(--ink);
+  background-color: rgb(255 253 249 / .9);
+  border-color: rgb(184 151 90 / .45);
+}
+
+.rsvp .input-group-text {
+  background-color: var(--paper-shade);
+  color: var(--ink-soft);
+}
+
+.rsvp .form-control:focus,
+.rsvp .form-select:focus,
+.rsvp .form-check-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 .22rem rgb(184 151 90 / .25);
+}
+
+.rsvp .form-check-label {
+  font-size: 1.15rem;
+}
+
+.rsvp .form-check-input:checked {
+  background-color: var(--sage-deep);
+  border-color: var(--sage-deep);
+}
+
+.rsvp .form-text,
+.rsvp .invalid-feedback {
+  font-size: .98rem;
+}
+
+.rsvp-modal {
+  padding: .5rem 1rem;
+  background: var(--paper) url("../assets/textures/paper.webp") 0 0 / 512px;
+  border: 1px solid rgb(184 151 90 / .6);
+  border-radius: 1.25rem;
+}
+
+.rsvp-modal__text {
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--ink-soft);
+}
+
+.rsvp-toast {
+  font-size: 1.05rem;
+  color: var(--paper);
+  background: var(--sage-deep);
+}
+
+.rsvp-toast .btn-close {
+  filter: invert(1) grayscale(1) brightness(2);
 }
 
 /* ---------- Motion preferences ------------------------------------------- */

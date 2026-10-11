@@ -73,7 +73,7 @@
     const start = performance.now();
     const step = (now) => {
       const k = Math.min(1, (now - start) / ms);
-      song.volume = from + (target - from) * k;
+      song.volume = clamp(from + (target - from) * k, 0, 1);
       if (k < 1) fading = requestAnimationFrame(step);
       else if (done) done();
     };
