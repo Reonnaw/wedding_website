@@ -181,6 +181,11 @@
   const N = scenes.length;
 
   let vw = 0, vh = 0, diag = 0, K = 8, portalD = 160, storyTop = 0, storyLen = 0;
+  let drapeW = 0, valanceH = 0;
+
+  const drapeLeft = document.getElementById('drapeLeft');
+  const drapeRight = document.getElementById('drapeRight');
+  const valance = document.getElementById('valance');
 
   function layout() {
     vw = stage.clientWidth;
@@ -191,6 +196,8 @@
     storyLen = (N - 1) * SEG * vh;
     story.style.height = `${storyLen + vh}px`;
     storyTop = story.getBoundingClientRect().top + window.scrollY;
+    drapeW = drapeLeft.offsetWidth;
+    valanceH = valance.offsetHeight;
 
     const portrait = vh > vw;
     for (const s of scenes) {
@@ -275,7 +282,7 @@
     if (s.caption._op === o) return;
     s.caption._op = o;
     s.caption.style.opacity = o;
-    s.caption.style.transform = `translateY(${((1 - o) * 14).toFixed(1)}px)`;
+    s.caption.style.transform = `perspective(700px) translateY(${((1 - o) * 14).toFixed(1)}px) rotateX(${((1 - o) * 24).toFixed(2)}deg)`;
   }
 
   const sway = { x: 0, y: 0 };
@@ -323,6 +330,27 @@
     }
   }
 
+  // The drapes hang closest to the camera: they drift further than any painted
+  // layer, and part (swinging toward the viewer) as the camera flies through a wreath.
+  const setTf = (el, tf) => {
+    if (el._tf !== tf) {
+      el._tf = tf;
+      el.style.transform = tf;
+    }
+  };
+
+  function drawFrame(e) {
+    const part = Math.sin(Math.PI * e);
+    const dx = -sway.x * 1.8;
+    const dy = -sway.y * 0.5;
+    const open = part * drapeW * 0.55;
+    const swing = (part * 32).toFixed(2);
+    const grow = (1 + part * 0.14).toFixed(4);
+    setTf(drapeLeft, `perspective(900px) translate3d(${(dx - open).toFixed(2)}px, ${dy.toFixed(2)}px, 0) rotateY(${-swing}deg) scale(${grow})`);
+    setTf(drapeRight, `perspective(900px) translate3d(${(dx + open).toFixed(2)}px, ${dy.toFixed(2)}px, 0) rotateY(${swing}deg) scale(${grow})`);
+    setTf(valance, `translate3d(${(-sway.x * 1.2).toFixed(2)}px, ${(-part * valanceH * 1.25 - Math.abs(sway.y) * 0.4).toFixed(2)}px, 0) scale(${(1 + part * 0.3).toFixed(4)})`);
+  }
+
   let current = -1;
   let portalOnScreen = null;
 
@@ -339,6 +367,7 @@
     const S0 = s0.portal ? Math.pow(K, e) : 1;
     const still = 1 - smooth(0, 0.3, e);
     const O0 = drawActive(s0, S0, e, still);
+    drawFrame(e);
     const live = new Set([s0]);
     setCaption(s0, 1 - smooth(0.02, 0.22, e));
 
@@ -590,12 +619,70 @@
     if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(ev.key)) handOver(ev);
   });
 
-  stage.addEventListener('pointermove', (ev) => {
+  window.addEventListener('pointermove', (ev) => {
     if (ev.pointerType !== 'mouse') return;
-    pointer.x = (ev.clientX / vw - 0.5) * 2;
-    pointer.y = (ev.clientY / vh - 0.5) * 2;
+    pointer.x = (ev.clientX / window.innerWidth - 0.5) * 2;
+    pointer.y = (ev.clientY / window.innerHeight - 0.5) * 2;
   });
-  stage.addEventListener('pointerleave', () => { pointer.x = pointer.y = 0; });
+  document.addEventListener('pointerleave', () => { pointer.x = pointer.y = 0; });
+
+  // On phones, tilting the device moves the layers instead of the mouse.
+  let restBeta = null;
+  function onTilt(ev) {
+    if (ev.beta == null || ev.gamma == null) return;
+    if (restBeta === null) restBeta = ev.beta;
+    restBeta += (ev.beta - restBeta) * 0.004;          // slowly re-centre on how the phone is held
+    pointer.x = clamp(ev.gamma / 22, -1, 1);
+    pointer.y = clamp((ev.beta - restBeta) / 22, -1, 1);
+  }
+  if (window.DeviceOrientationEvent && matchMedia('(pointer: coarse)').matches) {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // iOS asks for permission, and only from a tap
+      openBtn.addEventListener('click', () => {
+        DeviceOrientationEvent.requestPermission()
+          .then((state) => { if (state === 'granted') window.addEventListener('deviceorientation', onTilt); })
+          .catch(() => {});
+      }, { once: true });
+    } else {
+      window.addEventListener('deviceorientation', onTilt);
+    }
+  }
+
+  // Cover card tilt, while the curtains are still closed
+  const coverTilt = { x: 0, y: 0 };
+  function coverFrame(now) {
+    if (cover.classList.contains('is-open')) return;
+    coverTilt.x += (pointer.x + Math.sin(now / 2600) * 0.25 - coverTilt.x) * 0.07;
+    coverTilt.y += (pointer.y + Math.cos(now / 3300) * 0.2 - coverTilt.y) * 0.07;
+    cover.style.setProperty('--tx', coverTilt.x.toFixed(3));
+    cover.style.setProperty('--ty', coverTilt.y.toFixed(3));
+    requestAnimationFrame(coverFrame);
+  }
+  if (root.classList.contains('cover-open')) requestAnimationFrame(coverFrame);
+
+  // Finale and RSVP cards rise into place; the finale card tilts under the mouse
+  const riseIn = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('is-in');
+      riseIn.unobserve(entry.target);
+    }
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.depth-in').forEach((el) => riseIn.observe(el));
+
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('[data-tilt]').forEach((card) => {
+      card.addEventListener('pointermove', (ev) => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--tx', (((ev.clientX - r.left) / r.width - 0.5) * 2).toFixed(3));
+        card.style.setProperty('--ty', (((ev.clientY - r.top) / r.height - 0.5) * 2).toFixed(3));
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.removeProperty('--tx');
+        card.style.removeProperty('--ty');
+      });
+    });
+  }
 
   let running = false;
   let last = 0;

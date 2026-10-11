@@ -273,8 +273,13 @@
         </figure>
 
         <div class="stage-frame" aria-hidden="true">
-          <img class="stage-frame__tail stage-frame__tail--left" src="assets/ornaments/drape-tail.webp" alt="">
-          <img class="stage-frame__tail stage-frame__tail--right" src="assets/ornaments/drape-tail.webp" alt="">
+          <div class="stage-frame__drape stage-frame__drape--left" id="drapeLeft">
+            <img class="stage-frame__tail" src="assets/ornaments/drape-tail.webp" alt="">
+          </div>
+          <div class="stage-frame__drape stage-frame__drape--right" id="drapeRight">
+            <img class="stage-frame__tail" src="assets/ornaments/drape-tail.webp" alt="">
+          </div>
+          <div class="stage-frame__valance" id="valance"></div>
         </div>
         <canvas class="stage-sparkles" id="sparkles" aria-hidden="true"></canvas>
 
@@ -304,8 +309,8 @@
     <section class="finale" id="finale" aria-labelledby="finaleTitle">
       <div class="container">
         <div class="row justify-content-center">
-          <div class="col-12 col-md-10 col-lg-7">
-            <article class="finale__card text-center">
+          <div class="col-12 col-md-10 col-lg-7 depth-stage">
+            <article class="finale__card depth-in text-center" data-tilt>
               <p class="eyebrow">The End… and the Beginning</p>
               <h2 class="finale__names" id="finaleTitle">Nadiya <span class="amp">&amp;</span> Arga</h2>
               <svg class="flourish" viewBox="0 0 240 24" aria-hidden="true"><use href="#flourish"/></svg>
@@ -334,8 +339,8 @@
     <section class="rsvp" id="rsvp" aria-labelledby="rsvpTitle">
       <div class="container">
         <div class="row justify-content-center">
-          <div class="col-12 col-md-10 col-lg-7">
-            <div class="rsvp__card">
+          <div class="col-12 col-md-10 col-lg-7 depth-stage">
+            <div class="rsvp__card depth-in">
               <header class="text-center mb-4">
                 <p class="eyebrow mb-1">Kindly Reply</p>
                 <h2 class="rsvp__title" id="rsvpTitle">Will You Join Us?</h2>
