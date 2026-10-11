@@ -180,6 +180,7 @@
             <span class="chapter">Chapter I</span>
             <h2 class="scene__title">Once Upon a Time</h2>
             <p>…a love story was written in ink and gold, sealed with wax and two little rings.</p>
+            <p class="scene__detail zoom-reveal" data-reveal-from="0" data-reveal-to="0.12"><span class="scene__detail-label">Save the Date</span> Saturday, 22 July 2023</p>
           </figcaption>
         </figure>
 
@@ -193,6 +194,7 @@
             <span class="chapter">Chapter II</span>
             <h2 class="scene__title">The Princess</h2>
             <p>Crowned in silver and strands of jasmine, she waited for the day her story would begin.</p>
+            <p class="scene__detail zoom-reveal" data-reveal-from="0.92" data-reveal-to="1.12"><span class="scene__detail-label">The Bride</span> dr. Nadiya Dewi Kusnadi</p>
           </figcaption>
         </figure>
 
@@ -207,6 +209,7 @@
             <span class="chapter">Chapter III</span>
             <h2 class="scene__title">The Promise</h2>
             <p>With one handshake and one breath, a sacred vow was spoken and two lives became one.</p>
+            <p class="scene__detail zoom-reveal" data-reveal-from="1.92" data-reveal-to="2.12"><span class="scene__detail-label">Akad Nikah</span> Saturday, 22 July 2023 · family only</p>
           </figcaption>
         </figure>
 
@@ -220,6 +223,7 @@
             <span class="chapter">Chapter IV</span>
             <h2 class="scene__title">Blessed by Family</h2>
             <p>Beneath an arch of roses, with the ones who love them most beside them.</p>
+            <p class="scene__detail zoom-reveal" data-reveal-from="2.92" data-reveal-to="3.12"><span class="scene__detail-label">The Groom</span> Arga Wahyudi Muslim, S.Si</p>
           </figcaption>
         </figure>
 
@@ -234,6 +238,7 @@
             <span class="chapter">Chapter V</span>
             <h2 class="scene__title">A Royal Procession</h2>
             <p>Clad in velvet and gold, the prince and princess walked into the great hall.</p>
+            <p class="scene__detail zoom-reveal" data-reveal-from="3.92" data-reveal-to="4.12"><span class="scene__detail-label">The Great Hall</span> Sissoding Ballroom, 1st Floor</p>
           </figcaption>
         </figure>
 
@@ -248,6 +253,7 @@
             <span class="chapter">Chapter VI</span>
             <h2 class="scene__title">The Garden of Lights</h2>
             <p>Past blossoms and a thousand tiny lights, they walked on, side by side.</p>
+            <p class="scene__detail zoom-reveal" data-reveal-from="4.92" data-reveal-to="5.12"><span class="scene__detail-label">The Palace</span> Hotel Best Western Premier Panbil · Batam</p>
           </figcaption>
         </figure>
 
@@ -262,6 +268,7 @@
             <span class="chapter">Chapter VII</span>
             <h2 class="scene__title">Happily Ever After</h2>
             <p>And in a palace of flowers, surrounded by family, their forever began.</p>
+            <p class="scene__detail zoom-reveal" data-reveal-from="5.92" data-reveal-to="99"><span class="scene__detail-label">Reception</span> 13.00 – 16.00 WIB</p>
           </figcaption>
         </figure>
 
@@ -270,6 +277,21 @@
           <img class="stage-frame__tail stage-frame__tail--right" src="assets/ornaments/drape-tail.webp" alt="">
         </div>
         <canvas class="stage-sparkles" id="sparkles" aria-hidden="true"></canvas>
+
+        <div class="zoom-controls" id="zoomControls">
+          <div class="btn-group-vertical" role="group" aria-label="Storybook zoom">
+            <button type="button" class="btn btn-zoom" id="zoomIn" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Zoom in · next chapter" aria-label="Zoom in to the next chapter" aria-keyshortcuts="+">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg>
+            </button>
+            <button type="button" class="btn btn-zoom" id="zoomOut" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Zoom out · previous chapter" aria-label="Zoom out to the previous chapter" aria-keyshortcuts="-">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M7.5 10.5h6"/></svg>
+            </button>
+            <button type="button" class="btn btn-zoom" id="zoomReset" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Back to the first page" aria-label="Reset zoom to the first chapter" aria-keyshortcuts="0">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4v4h4"/></svg>
+            </button>
+          </div>
+          <div class="zoom-meter" aria-hidden="true"><span class="zoom-meter__fill" id="zoomMeter"></span></div>
+        </div>
 
         <div class="stage-hud">
           <p class="stage-hud__chapter" id="chapterLabel" aria-live="polite"></p>

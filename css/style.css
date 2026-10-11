@@ -307,6 +307,7 @@ body {
   max-width: none;
   overflow: hidden;
   isolation: isolate;
+  contain: layout paint;
   background: var(--paper);
 }
 
@@ -361,6 +362,7 @@ body {
   background: linear-gradient(to top, rgb(246 239 228 / .97) 32%, rgb(246 239 228 / .78) 62%, rgb(246 239 228 / 0));
   opacity: 0;
   pointer-events: none;
+  will-change: opacity, transform;
 }
 
 .js-3d .stage-frame {
@@ -478,6 +480,144 @@ body {
 
 @keyframes cue-bob {
   50% { transform: translateY(.3rem) rotate(45deg); }
+}
+
+/* ---------- Zoom controls ------------------------------------------------ */
+:root {
+  --pink-pale: #fbeef0;
+  --pink: #f2d3d7;
+  --pink-deep: #dca7ae;
+  --ivory: #fffaf1;
+}
+
+.zoom-controls {
+  display: none;
+}
+
+.js-3d .zoom-controls {
+  position: absolute;
+  top: 50%;
+  left: calc(.6rem + env(safe-area-inset-left));
+  z-index: 720;
+  display: flex;
+  align-items: stretch;
+  gap: .45rem;
+  transform: translateY(-50%);
+}
+
+.btn-zoom {
+  --bs-btn-padding-x: 0;
+  --bs-btn-padding-y: 0;
+  --bs-btn-color: var(--gold-deep);
+  --bs-btn-bg: var(--ivory);
+  --bs-btn-border-color: rgb(184 151 90 / .65);
+  --bs-btn-border-width: 1px;
+  --bs-btn-hover-color: var(--ink);
+  --bs-btn-hover-bg: var(--pink);
+  --bs-btn-hover-border-color: var(--gold);
+  --bs-btn-active-color: var(--ink);
+  --bs-btn-active-bg: var(--pink-deep);
+  --bs-btn-active-border-color: var(--gold);
+  --bs-btn-disabled-color: rgb(140 106 50 / .45);
+  --bs-btn-disabled-bg: var(--pink-pale);
+  --bs-btn-disabled-border-color: rgb(184 151 90 / .35);
+  --bs-btn-disabled-opacity: 1;
+  --bs-btn-focus-shadow-rgb: 220, 167, 174;
+  --bs-border-radius: 999px;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  transition: background-color .25s ease, color .25s ease, transform .2s ease;
+}
+
+.zoom-controls .btn-group-vertical > .btn-zoom {
+  width: 2.6rem;
+  flex: none;
+}
+
+.zoom-controls .btn-group-vertical {
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px var(--ivory), 0 0 0 4px rgb(184 151 90 / .55), 0 .6rem 1.4rem rgb(74 59 50 / .22);
+}
+
+.btn-zoom svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.btn-zoom:not(:disabled):hover svg {
+  transform: scale(1.1);
+}
+
+.zoom-meter {
+  position: relative;
+  width: 4px;
+  margin-block: .9rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 250 241 / .8);
+  box-shadow: 0 0 0 1px rgb(184 151 90 / .45);
+}
+
+.zoom-meter__fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(var(--pink-deep), var(--gold));
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+.tooltip {
+  --bs-tooltip-bg: var(--ivory);
+  --bs-tooltip-color: var(--ink);
+  --bs-tooltip-opacity: 1;
+  --bs-tooltip-font-size: .95rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  filter: drop-shadow(0 0 1px rgb(184 151 90 / .9)) drop-shadow(0 .3rem .6rem rgb(74 59 50 / .18));
+}
+
+/* ---------- Threshold reveals -------------------------------------------- */
+.scene__caption .scene__detail {
+  max-width: none;
+  margin: .7rem auto 0;
+  font-size: clamp(.98rem, 3.2vw, 1.12rem);
+  color: var(--ink);
+}
+
+.scene__detail-label {
+  display: inline-block;
+  margin-right: .4rem;
+  padding: .12rem .65rem;
+  font-family: var(--font-caps);
+  font-size: .66rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  vertical-align: .15em;
+  color: var(--gold-deep);
+  background: var(--pink-pale);
+  border: 1px solid rgb(220 167 174 / .8);
+  border-radius: 999px;
+}
+
+.js-3d .zoom-reveal {
+  opacity: 0;
+  transform: translateY(.5rem);
+  transition: opacity .7s ease, transform .7s ease;
+  will-change: opacity, transform;
+}
+
+.js-3d .zoom-reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+  transition-delay: .25s;
 }
 
 /* ---------- Music toggle ------------------------------------------------- */

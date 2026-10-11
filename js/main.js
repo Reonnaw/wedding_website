@@ -247,7 +247,11 @@
   }
 
   function put(el, x, y, scale, opacity, z) {
-    el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(5)})`;
+    const transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(5)})`;
+    if (el._tf !== transform) {
+      el._tf = transform;
+      el.style.transform = transform;
+    }
     if (el._op !== opacity) {
       el._op = opacity;
       el.style.opacity = opacity;
@@ -373,10 +377,99 @@
       title.textContent = `: ${scenes[shown].title}`;
       chapterLabel.replaceChildren(`Chapter ${ROMAN[shown] || shown + 1} of ${ROMAN[N - 1] || N}`, title);
     }
-    scrollCue.classList.toggle('is-visible', !auto && e === 0 && a < N - 1 && !root.classList.contains('cover-open'));
+    scrollCue.classList.toggle('is-visible', !auto && !glide && e === 0 && a < N - 1 && !root.classList.contains('cover-open'));
+    updateZoomState(t);
   }
 
+  /* ---------- Zoom state and threshold reveals ----------------------------- */
+  const zoomIn = document.getElementById('zoomIn');
+  const zoomOut = document.getElementById('zoomOut');
+  const zoomReset = document.getElementById('zoomReset');
+  const zoomMeter = document.getElementById('zoomMeter');
+  const reveals = [...stage.querySelectorAll('[data-reveal-from]')].map((el) => ({
+    el,
+    from: parseFloat(el.dataset.revealFrom),
+    to: parseFloat(el.dataset.revealTo),
+    shown: false,
+  }));
+
+  const zoomState = { depth: -1, level: -1, atStart: null, atEnd: null };
+
+  function updateZoomState(depth) {
+    if (Math.abs(depth - zoomState.depth) < 0.0005) return;
+    zoomState.depth = depth;
+
+    for (const r of reveals) {
+      const shown = depth >= r.from && depth < r.to;
+      if (shown !== r.shown) {
+        r.shown = shown;
+        r.el.classList.toggle('is-revealed', shown);
+      }
+    }
+
+    const level = Math.round(depth);
+    if (level !== zoomState.level) {
+      zoomState.level = level;
+      stage.dataset.zoomLevel = level;
+    }
+    const atStart = depth < 0.02;
+    const atEnd = depth > N - 1.02;
+    if (atStart !== zoomState.atStart) zoomOut.disabled = zoomReset.disabled = zoomState.atStart = atStart;
+    if (atEnd !== zoomState.atEnd) zoomIn.disabled = zoomState.atEnd = atEnd;
+    zoomMeter.style.transform = `scaleY(${(depth / (N - 1)).toFixed(4)})`;
+  }
+
+  // Glide the camera to a chapter: the scroll position is the zoom depth.
+  let glide = null;
+  const easeInOut = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+
+  function zoomTo(level) {
+    const target = clamp(level, 0, N - 1);
+    const from = window.scrollY;
+    const to = storyTop + target * SEG * vh;
+    setAuto(false);
+    const chapters = Math.abs(to - from) / (SEG * vh);
+    glide = { from, to, pos: from, start: performance.now(), ms: clamp(chapters * 1700, 700, 4200) };
+  }
+
+  function stepGlide(now) {
+    if (Math.abs(window.scrollY - glide.pos) > 3) {
+      glide = null;
+      return;
+    }
+    const k = Math.min(1, (now - glide.start) / glide.ms);
+    glide.pos = glide.from + (glide.to - glide.from) * easeInOut(k);
+    window.scrollTo({ top: glide.pos, behavior: 'instant' });
+    if (k >= 1) glide = null;
+  }
+
+  const depthNow = () => clamp((window.scrollY - storyTop) / (SEG * vh), 0, N - 1);
+  zoomIn.addEventListener('click', () => zoomTo(Math.floor(depthNow() + 0.05) + 1));
+  zoomOut.addEventListener('click', () => zoomTo(Math.ceil(depthNow() - 0.05) - 1));
+  zoomReset.addEventListener('click', () => zoomTo(0));
+
+  window.addEventListener('keydown', (ev) => {
+    if (ev.ctrlKey || ev.metaKey || ev.altKey || !running || root.classList.contains('cover-open')) return;
+    if (ev.target instanceof Element && ev.target.closest('input, textarea, select, [contenteditable]')) return;
+    const rect = story.getBoundingClientRect();
+    if (rect.bottom < vh * 0.5) return;
+    if (ev.key === '+' || ev.key === '=') zoomIn.click();
+    else if (ev.key === '-' || ev.key === '_') zoomOut.click();
+    else if (ev.key === '0') zoomReset.click();
+  });
+
+  // Bootstrap loads after this script, so set up the tooltips once the page is ready.
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.bootstrap || !matchMedia('(hover: hover)').matches) return;
+    document.querySelectorAll('#zoomControls [data-bs-toggle="tooltip"]').forEach((el) => {
+      const tip = bootstrap.Tooltip.getOrCreateInstance(el, { trigger: 'hover focus' });
+      el.addEventListener('click', () => tip.hide());
+    });
+  });
+
   /* ---------- Sparkles --------------------------------------------------- */
+  const lowPower = (navigator.hardwareConcurrency || 8) <= 4 || Boolean(navigator.connection && navigator.connection.saveData);
+
   const sparkles = (() => {
     const canvas = document.getElementById('sparkles');
     const ctx = canvas.getContext('2d');
@@ -414,13 +507,13 @@
 
     return {
       resize() {
-        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const dpr = Math.min(lowPower ? 1.5 : 2, window.devicePixelRatio || 1);
         w = vw;
         h = vh;
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        const count = Math.round(clamp((w * h) / 20000, 24, 70));
+        const count = Math.round(clamp((w * h) / 20000, 24, 70) * (lowPower ? 0.5 : 1));
         motes.length = 0;
         for (let i = 0; i < count; i++) motes.push(spawn({}, true));
       },
@@ -488,6 +581,7 @@
   const handOver = (ev) => {
     if (ev.target instanceof Element && ev.target.closest('button')) return;
     if (auto) setAuto(false);
+    glide = null;
     clearTimeout(toFinale);
   };
   window.addEventListener('wheel', handOver, { passive: true });
@@ -512,6 +606,7 @@
     last = now;
 
     if (auto) stepAuto(dt * 1000);
+    else if (glide) stepGlide(now);
 
     const amp = Math.min(vw, vh) * 0.02;
     const tx = pointer.x * amp + Math.sin(now / 2900) * amp * 0.55;
@@ -519,7 +614,7 @@
     sway.x += (tx - sway.x) * 0.06;
     sway.y += (ty - sway.y) * 0.06;
 
-    const y = auto ? autoPos : window.scrollY;
+    const y = auto ? autoPos : glide ? glide.pos : window.scrollY;
     draw((y - storyTop) / (SEG * vh));
     sparkles.draw(dt, now, portalOnScreen);
     requestAnimationFrame(frame);
@@ -535,7 +630,15 @@
     }
   }).observe(story);
 
-  window.addEventListener('resize', layout);
+  let resizeQueued = false;
+  window.addEventListener('resize', () => {
+    if (resizeQueued) return;
+    resizeQueued = true;
+    requestAnimationFrame(() => {
+      resizeQueued = false;
+      layout();
+    });
+  });
   layout();
   draw(0);
 })();
